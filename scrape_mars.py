@@ -68,6 +68,7 @@ class Scraper():
                 for data in soup2.find_all('div', class_='wysiwyg_content'):
                     p=data.find('p')
                     article_text=p.text
+                    article_text=article_text.replace("\\", "")
                     news_teaser_list.append(article_text)
                     self.news_teaser_list=news_teaser_list
         
@@ -120,15 +121,17 @@ class Scraper():
         image_url_list=[]
 
         soup = self.scrape(URL_list[4])
-        for a in soup.find_all('a', class_="itemLink product-item"):
+        for a in soup.find_all('img', class_="itemLink product-item"):
             title=a.text
             title_list.append(title)
-            image_url=URL_list[4]+a.get("href")
+            image_url="https://astrogeology.usgs.gov"+a.get("src")
             self.image_url=image_url
             image_url_list.append(image_url)
     
         image_dict={"image_url": image_url_list, "title": title_list}
         self.image_dict=image_dict
+        self.image_url_list=image_url_list
+        self.image_title_list=title_list
 
     def to_json(self):
         this_dict={"_id":"mars", "news_link": self.news_link_list, 
@@ -137,7 +140,9 @@ class Scraper():
                     "featured_image_url" :self.featured_image_url,
                     "mars_weather":self.mars_weather,
                     "facts_table":self.df_html,
-                    "image_dict":self.image_dict
+                    "image_dict":self.image_dict,
+                    "image_title_list":self.image_title_list,
+                    "image_url_list":self.image_url_list
                     }
 
 
