@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+ipykernel = "*"
+datetime = "*"
+pymongo = "*"
+selenium = "*"
+beautifulsoup4 = "*"
+requests = "*"
+pandas = "*"
+flask = "*"
+lxml = "*"
+
+[requires]
+python_version = "3.7"
