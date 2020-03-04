@@ -102,6 +102,11 @@ class Scraper():
         soup=BeautifulSoup((open(FILE)), 'lxml')     
         table = soup.find_all('table')[0] 
         df = pd.read_html(str(table))[0]
+
+        df.columns=['Fact', 'Info']
+
+        
+        df.reset_index(None)
    
         df_html=df.to_html() 
 
@@ -120,19 +125,42 @@ class Scraper():
         title_list=[]
         image_url_list=[]
 
-        soup = self.scrape(URL_list[4])
-        for a in soup.find_all('img', class_="itemLink product-item"):
+        soup2 = self.scrape(URL_list[4])
+
+       
+        FILE = "html_astrogeology_scrape.html"
+        with open(FILE, "w+", encoding="utf-8") as f:
+            f.write(soup2.prettify())
+
+        soup=BeautifulSoup((open(FILE)), 'lxml') 
+        for a in soup.find_all('a', class_='itemLink product-item'):
             title=a.text
+            title=title.replace("\n", "")
             title_list.append(title)
-            image_url="https://astrogeology.usgs.gov"+a.get("src")
-            self.image_url=image_url
-            image_url_list.append(image_url)
+            link_url=a.get("href")
+            link_url="https://astrogeology.usgs.gov" + link_url
+
+            #Crawls to this new page to scrape data
+
+            soup3=self.scrape(link_url)
+
+            FILE = "html_astrogeology_scrape2.html"
+            #Makes new file locally
+            with open(FILE, "w+", encoding="utf-8") as f:
+                f.write(soup3.prettify())
+            
+            soup4=BeautifulSoup((open(FILE)), 'lxml') 
+            #Navigate to new page to get better image
+            a = soup4.find('a', target='_blank')
+            image_link=a.get("href")
+            image_url_list.append(image_link)
     
         image_dict={"image_url": image_url_list, "title": title_list}
         self.image_dict=image_dict
         self.image_url_list=image_url_list
         self.image_title_list=title_list
-
+        print(self.image_title_list)
+        print(self.image_url_list)
     def to_json(self):
         this_dict={"_id":"mars", "news_link": self.news_link_list, 
                     "news_title": self.news_title_list, 
@@ -173,11 +201,12 @@ class Scraper():
         collection_mars_scrape.insert_one(self.this_dict)
 
         
-        facts_table=db.mars_scrape.find({}, {"facts_table": 1})
-        
+    def from_mongo(self):
+        client = pymongo.MongoClient('localhost', 27017)
+        db = client['mars_scrape_db']
         data=db.mars_scrape.find_one({})
         self.data=data
-        
+        return        
 
         
 
@@ -185,7 +214,7 @@ class Scraper():
 
         
       
-        return  
+      
 
     def get_data(self):
         
