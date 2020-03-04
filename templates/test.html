@@ -1,7 +1,11 @@
 <html>
     <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <h1>Mission to Mars</h1>
+        <br>
+        <br>
+        <h1 align='center'>Mission to Mars</h1>
+        <br>
+        <br>
     </head>
     <body>
         {{this_table | safe}}
@@ -13,16 +17,12 @@
         <a href="{{the_news_link | safe }}"> {{ the_news_title }}</a><br>
         {{ the_news_teaser }}
         <br>
-       
-        {% for i in image_title_list %}
-        {% set image_title = image_title_list[loop.index-1] %}
-        {% set image_url = image_url_list[loop.index-1] %}
-        {{ image_title }}
+        {% for the_image_title, the_image_url in image_titles_urls %}
+        <h2>{{ the_image_title }}</h2>
         <br>
+        <img src="{{ the_image_url | safe }}">
 
-        <img src="{{ image_url }}">
         {% endfor %}
-        
 
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
